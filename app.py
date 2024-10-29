@@ -1,4 +1,7 @@
+from utils.belasting import belastingstelsel
 import streamlit as st
+
+
 
 with st.sidebar:
     st.write("Vul hier je gegevens in")
@@ -7,3 +10,6 @@ with st.sidebar:
     input_13e = st.number_input(label="13e maand (%)", value=100/12, min_value=0.0)
     input_bonus_abs = st.number_input(label="Bonus (€)", value=0.00, min_value=0.00)
     input_bonus_perc = st.number_input(label="Bonus (%)", value=0.00, min_value=0.00)
+
+st.metric(label="Netto Per Maand", value=f"€{input_salaris}")
+st.metric(label="Stijging tot volgende 100 euro", value=f"Bruto - x")
