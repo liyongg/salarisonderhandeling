@@ -1,7 +1,6 @@
 import streamlit as st
 
 from utils.Belasting import Belasting
-from utils.belastingstelsel import belastingstelsels
 from utils.Salaris import Salaris
 
 # Global predefined settings
@@ -41,6 +40,9 @@ with st.sidebar:
         input_bonus_abs: float = st.number_input(
             label="Bonus (€)", value=0.00, min_value=0.00
         )
+        input_bruto_netto_ruil: float = st.number_input(
+            label="Bruto/Netto Ruil (€/Maand)", value=0.00, min_value=0.00
+        )
     elif input_maand_of_jaar == "Jaarlijks":
         input_salaris_jaar = st.number_input(
             label="Bruto Salaris (€/jaar)", value=45000.00, min_value=0.00
@@ -54,6 +56,7 @@ salaris = Salaris(
     percentage_bonus=input_bonus_perc,
     percentage_pensioen=input_pensioen_perc,
     bonus=input_bonus_abs,
+    bruto_netto_ruil=input_bruto_netto_ruil,
 )
 salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
 salaris_netto_jaar = salaris.bereken_netto_jaarlijks(belasting=belasting)
