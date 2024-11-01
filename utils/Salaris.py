@@ -8,12 +8,14 @@ class Salaris:
         percentage_vakantiegeld: float = 8.0,
         percentage_eindejaars: float = 0,
         percentage_bonus: float = 0,
+        percentage_pensioen: float = 0,
         bonus: float = 0,
     ):
         self.bruto_per_maand = bruto_per_maand
         self.percentage_vakantiegeld = percentage_vakantiegeld
         self.percentage_eindejaars = percentage_eindejaars
         self.percentage_bonus = percentage_bonus
+        self.percentage_pensioen = percentage_pensioen
         self.bonus = bonus
 
     def bereken_bruto_jaarlijks(self) -> float:
@@ -21,6 +23,7 @@ class Salaris:
             self.percentage_vakantiegeld
             + self.percentage_eindejaars
             + self.percentage_bonus
+            - self.percentage_pensioen
         )
         percentage = (100 + som_percentages) / 100
         return (12 * self.bruto_per_maand * percentage) + self.bonus
