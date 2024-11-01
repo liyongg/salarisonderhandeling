@@ -32,11 +32,14 @@ with st.sidebar:
         input_eindejaars: float = st.number_input(
             label="Eindejaarsuitkering (%)", value=100 / 12, min_value=0.0
         )
-        input_bonus_abs: float = st.number_input(
-            label="Bonus (€)", value=0.00, min_value=0.00
-        )
         input_bonus_perc: float = st.number_input(
             label="Bonus (%)", value=0.00, min_value=0.00
+        )
+        input_pensioen_perc: float = st.number_input(
+            label="Inleg Pensioen (%)", value=0.00, min_value=0.00
+        )
+        input_bonus_abs: float = st.number_input(
+            label="Bonus (€)", value=0.00, min_value=0.00
         )
     elif input_maand_of_jaar == "Jaarlijks":
         input_salaris_jaar = st.number_input(
@@ -49,6 +52,7 @@ salaris = Salaris(
     percentage_vakantiegeld=input_vakantiegeld,
     percentage_eindejaars=input_eindejaars,
     percentage_bonus=input_bonus_perc,
+    percentage_pensioen=input_pensioen_perc,
     bonus=input_bonus_abs,
 )
 salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
