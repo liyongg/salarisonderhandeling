@@ -25,23 +25,49 @@ with st.sidebar:
         input_salaris: float = st.number_input(
             label="Bruto Salaris (€/maand)", value=3500.00, min_value=0.00
         )
-        input_vakantiegeld: float = st.number_input(
-            label="Vakantiegeld (%)", value=8.00, min_value=8.00
-        )
-        input_eindejaars: float = st.number_input(
-            label="Eindejaarsuitkering (%)", value=100 / 12, min_value=0.0
-        )
-        input_bonus_perc: float = st.number_input(
-            label="Bonus (%)", value=0.00, min_value=0.00
-        )
-        input_pensioen_perc: float = st.number_input(
-            label="Inleg Pensioen (%)", value=0.00, min_value=0.00
-        )
-        input_bonus_abs: float = st.number_input(
-            label="Bonus (€)", value=0.00, min_value=0.00
-        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            input_vakantiegeld: float = st.number_input(
+                label="Vakantiegeld (%)", value=8.00, min_value=8.00
+            )
+            input_bonus_perc: float = st.number_input(
+                label="Bonus (%)", value=0.00, min_value=0.00
+            )
+            input_bonus_abs: float = st.number_input(
+                label="Bonus (€)",
+                value=0.00,
+                min_value=0.00,
+                help="Bruto bonus per jaar",
+            )
+
+        with col2:
+
+            input_eindejaars: float = st.number_input(
+                label="Eindejaars (%)",
+                value=100 / 12,
+                min_value=0.0,
+                help="Ook bekend als persoonlijk keuzebudget",
+            )
+            input_pensioen_perc: float = st.number_input(
+                label="Pensioen (%)",
+                value=0.00,
+                min_value=0.00,
+                help="Procent bruto maandelijks salaris naar pensioen.",
+            )
+            input_vergoeding: float = st.number_input(
+                label="Vergoeding (Netto)",
+                value=0.00,
+                min_value=0.00,
+                help="Zoals thuiswerk- of internetvergoeding per maand.",
+            )
+
         input_bruto_netto_ruil: float = st.number_input(
-            label="Bruto/Netto Ruil (€/Maand)", value=0.00, min_value=0.00
+            label="Bruto/Netto Ruil (€/Maand)",
+            value=0.00,
+            min_value=0.00,
+            help="Zoals een vitaliteitsverlof",
         )
     elif input_maand_of_jaar == "Jaarlijks":
         input_salaris_jaar = st.number_input(
@@ -57,6 +83,7 @@ salaris = Salaris(
     percentage_pensioen=input_pensioen_perc,
     bonus=input_bonus_abs,
     bruto_netto_ruil=input_bruto_netto_ruil,
+    vergoeding=input_vergoeding,
 )
 salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
 salaris_netto_jaar = salaris.bereken_netto_jaarlijks(belasting=belasting)
