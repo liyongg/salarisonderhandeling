@@ -11,6 +11,7 @@ class Salaris:
         percentage_pensioen: float = 0,
         bonus: float = 0,
         bruto_netto_ruil: float = 0,
+        vergoeding: float = 0,
     ):
         self.bruto_per_maand = bruto_per_maand
         self.percentage_vakantiegeld = percentage_vakantiegeld
@@ -19,6 +20,7 @@ class Salaris:
         self.percentage_pensioen = percentage_pensioen
         self.bonus = bonus
         self.bruto_netto_ruil = bruto_netto_ruil
+        self.vergoeding = vergoeding
 
     def bereken_bruto_jaarlijks(self) -> float:
         som_percentages = (
@@ -35,4 +37,4 @@ class Salaris:
     def bereken_netto_jaarlijks(self, belasting: "Belasting") -> float:
         bruto_jaarlijks = self.bereken_bruto_jaarlijks()
         netto_jaarlijks = belasting.bereken_netto_salaris(bruto_jaarlijks)
-        return netto_jaarlijks + 12 * self.bruto_netto_ruil
+        return netto_jaarlijks + 12 * (self.bruto_netto_ruil + self.vergoeding)
