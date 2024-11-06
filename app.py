@@ -64,7 +64,7 @@ with st.sidebar:
             )
 
         input_bruto_netto_ruil: float = st.number_input(
-            label="Bruto/Netto Ruil (€/Maand)",
+            label="Bruto-Netto Ruil (€/Maand)",
             value=0.00,
             min_value=0.00,
             help="Zoals een vitaliteitsverlof",
@@ -99,4 +99,5 @@ st.metric(
 st.metric(
     label="Netto (Maand)",
     value=f"€{salaris_netto_maand:,.2f}",
+    help="Indien *alle* bonussen maandelijks uitbetaald worden.",
 )
