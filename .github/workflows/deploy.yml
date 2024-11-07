@@ -46,7 +46,7 @@ jobs:
           username: ${{ secrets.PI_USERNAME }}
           password: "${{ secrets.PI_PASSWORD }}"
           script: |
-            docker pull --platform linux/arm64 "${{ env.DOCKER_USERNAME }/${{ env.DOCKER_IMAGE:latest }}"
+            docker pull --platform linux/arm64 ${{ env.DOCKER_USERNAME }/${{ env.DOCKER_IMAGE:latest }}
             docker stop ${{ env.CONTAINER }} || true
             docker rm ${{ env.CONTAINER }} || true
-            docker run -d --name ${{ env.CONTAINER }} --publish ${{ env.PORT }}:8501 --restart always "${{ env.DOCKER_USERNAME }}/${{ env.$DOCKER_IMAGE }}"
+            docker run -d --name ${{ env.CONTAINER }} --publish ${{ env.PORT }}:8501 --restart always ${{ env.DOCKER_USERNAME }}/${{ env.$DOCKER_IMAGE }}
