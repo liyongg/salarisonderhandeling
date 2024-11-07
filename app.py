@@ -23,22 +23,26 @@ with st.sidebar:
         st.write(f"*Belastingjaar **{input_belastingjaar}***")
 
         input_salaris: float = st.number_input(
-            label="Bruto Salaris (€/maand)", value=3500.00, min_value=0.00
+            label="Bruto Salaris (€/maand)",
+            value=3500.00,
+            min_value=0.00,
+            max_value=1_000_000.0,
         )
 
         col1, col2 = st.columns(2)
 
         with col1:
             input_vakantiegeld: float = st.number_input(
-                label="Vakantiegeld (%)", value=8.00, min_value=8.00
+                label="Vakantiegeld (%)", value=8.00, min_value=8.00, max_value=100.0
             )
             input_bonus_perc: float = st.number_input(
-                label="Bonus (%)", value=0.00, min_value=0.00
+                label="Bonus (%)", value=0.00, min_value=0.00, max_value=100.0
             )
             input_bonus_abs: float = st.number_input(
                 label="Bonus (€)",
                 value=0.00,
                 min_value=0.00,
+                max_value=1_000_000.0,
                 help="Bruto bonus per jaar",
             )
 
@@ -48,18 +52,21 @@ with st.sidebar:
                 label="Eindejaars (%)",
                 value=100 / 12,
                 min_value=0.0,
+                max_value=100.0,
                 help="Ook bekend als persoonlijk keuzebudget",
             )
             input_pensioen_perc: float = st.number_input(
                 label="Pensioen (%)",
                 value=0.00,
                 min_value=0.00,
+                max_value=100.0,
                 help="Procent bruto maandelijks salaris naar pensioen.",
             )
             input_vergoeding: float = st.number_input(
                 label="Vergoeding (Netto)",
                 value=0.00,
                 min_value=0.00,
+                max_value=1_000_000.0,
                 help="Zoals thuiswerk- of internetvergoeding per maand.",
             )
 
@@ -67,11 +74,15 @@ with st.sidebar:
             label="Bruto-Netto Ruil (€/Maand)",
             value=0.00,
             min_value=0.00,
+            max_value=1_000_000.0,
             help="Zoals een vitaliteitsverlof",
         )
     elif input_maand_of_jaar == "Jaarlijks":
         input_salaris_jaar = st.number_input(
-            label="Bruto Salaris (€/jaar)", value=45000.00, min_value=0.00
+            label="Bruto Salaris (€/jaar)",
+            value=45000.00,
+            min_value=0.00,
+            max_value=100_000_000.0,
         )
 
 
