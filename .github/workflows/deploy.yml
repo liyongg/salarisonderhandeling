@@ -37,7 +37,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    # needs: build
     steps:
       - name: SSH in Pi and Pull & Deploy
         uses: appleboy/ssh-action@master
