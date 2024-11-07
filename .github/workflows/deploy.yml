@@ -4,6 +4,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+env:
+  DOCKER_USERNAME: panliyong
+  DOCKER_IMAGE: salarisonderhandeling
+  PORT: 8502
+  CONTAINER: salaris
   
 jobs:
   build:
@@ -20,6 +26,7 @@ jobs:
         with:
           username: panliyong
           password: "${{ secrets.DOCKER_PASSWORD }}"
+
     
       - name: Build and Push Docker Image
         run: |
@@ -27,7 +34,7 @@ jobs:
           docker buildx inspect --bootstrap
           docker buildx build \
             --platform linux/arm64 \
-            -t panliyong/salarisonderhandeling:latest \
+            -t $DOCKER_USERNAME/$DOCKER_IMAGE:latest \
             --push .
 
   deploy:
