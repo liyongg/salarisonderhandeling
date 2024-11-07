@@ -7,6 +7,8 @@ from utils.Salaris import Salaris
 input_belastingjaar = 2024
 input_maand_of_jaar = "Maandelijks"
 
+st.set_page_config(page_title="Salarisonderhandeling", page_icon="💸", layout="wide")
+
 with st.sidebar:
 
     with st.popover("Opties"):
