@@ -45,6 +45,7 @@ jobs:
           username: ${{ secrets.PI_USERNAME }}
           password: "${{ secrets.PI_PASSWORD }}"
           script: |
+            echo "Using '$CONTAINER'"
             docker pull --platform linux/arm64 "$DOCKER_USERNAME/$DOCKER_IMAGE:latest"
             docker stop "$CONTAINER" || true
             docker rm "$CONTAINER" || true
