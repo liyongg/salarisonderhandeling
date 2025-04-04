@@ -1,22 +1,23 @@
 import streamlit as st
 
 from utils.Belasting import Belasting
+from utils.belastingstelsel import belastingstelsels
 from utils.Salaris import Salaris
 
 # Global predefined settings
-input_belastingjaar = 2024
+input_belastingjaar = max(belastingstelsels.keys())
 input_maand_of_jaar = "Maandelijks"
 
 st.set_page_config(page_title="Salarisonderhandeling", page_icon="💸", layout="wide")
 
 with st.sidebar:
-
     with st.popover("Opties"):
         input_belastingjaar: int = st.selectbox(
-            label="Belastingjaar", options=[2024, 2025]
+            label="Belastingjaar",
+            options=sorted(belastingstelsels.keys(), reverse=True),
         )
         input_maand_of_jaar: str = st.selectbox(
-            label="Salarisbasis", options=["Maandelijks", "Jaarlijks"]
+            label="Salarisbasis", options=["Maandelijks"]
         )
 
         belasting = Belasting(jaar=input_belastingjaar)
@@ -49,7 +50,6 @@ with st.sidebar:
             )
 
         with col2:
-
             input_eindejaars: float = st.number_input(
                 label="Eindejaars (%)",
                 value=100 / 12,
