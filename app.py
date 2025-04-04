@@ -13,10 +13,11 @@ st.set_page_config(page_title="Salarisonderhandeling", page_icon="💸", layout=
 with st.sidebar:
     with st.popover("Opties"):
         input_belastingjaar: int = st.selectbox(
-            label="Belastingjaar", options=sorted(belastingstelsels.keys(), reverse=True)
+            label="Belastingjaar",
+            options=sorted(belastingstelsels.keys(), reverse=True),
         )
         input_maand_of_jaar: str = st.selectbox(
-            label="Salarisbasis", options=["Maandelijks", "Jaarlijks"]
+            label="Salarisbasis", options=["Maandelijks"]
         )
 
         belasting = Belasting(jaar=input_belastingjaar)
