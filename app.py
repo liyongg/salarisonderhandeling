@@ -20,7 +20,7 @@ with st.sidebar:
             options=sorted(belastingstelsels.keys(), reverse=True),
         )
         input_maand_of_jaar: str = st.selectbox(
-            label="Salarisbasis", options=["Maandelijks"]
+            label="Salarisbasis", options=["Maandelijks", "Jaarlijks"]
         )
 
         belasting = Belasting(jaar=input_belastingjaar)
@@ -33,6 +33,7 @@ with st.sidebar:
             value=3500.00,
             min_value=0.00,
             max_value=1_000_000.0,
+            step=100.00,
         )
 
         col1, col2 = st.columns(2)
@@ -88,22 +89,28 @@ with st.sidebar:
             value=45000.00,
             min_value=0.00,
             max_value=100_000_000.0,
+            step=100.00,
         )
 
-salaris = Salaris(
-    bruto_per_maand=input_salaris,
-    percentage_vakantiegeld=input_vakantiegeld,
-    percentage_eindejaars=input_eindejaars,
-    percentage_bonus=input_bonus_perc,
-    percentage_pensioen=input_pensioen_perc,
-    bonus=input_bonus_abs,
-    bruto_netto_ruil=input_bruto_netto_ruil,
-    vergoeding=input_vergoeding,
-)
-salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
-salaris_netto_jaar = salaris.bereken_netto_jaarlijks(belasting=belasting)
-salaris_netto_maand = salaris_netto_jaar / 12
+if input_maand_of_jaar == "Maandelijks":
+    salaris = Salaris(
+        bruto_per_maand=input_salaris,
+        percentage_vakantiegeld=input_vakantiegeld,
+        percentage_eindejaars=input_eindejaars,
+        percentage_bonus=input_bonus_perc,
+        percentage_pensioen=input_pensioen_perc,
+        bonus=input_bonus_abs,
+        bruto_netto_ruil=input_bruto_netto_ruil,
+        vergoeding=input_vergoeding,
+    )
 
+    salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
+    salaris_netto_jaar = salaris.bereken_netto_jaarlijks(belasting=belasting)
+elif input_maand_of_jaar == "Jaarlijks":
+    salaris_bruto_jaar = input_salaris_jaar
+    salaris_netto_jaar = belasting.bereken_netto_salaris(salaris_bruto_jaar)
+
+salaris_netto_maand = salaris_netto_jaar / 12
 
 metric_col1, metric_col2 = st.columns(2)
 
