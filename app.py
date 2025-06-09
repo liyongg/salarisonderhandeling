@@ -1,4 +1,7 @@
+import math
+
 import streamlit as st
+from scipy.optimize import bisect
 
 from utils.Belasting import Belasting
 from utils.belastingstelsel import belastingstelsels
@@ -87,7 +90,6 @@ with st.sidebar:
             max_value=100_000_000.0,
         )
 
-
 salaris = Salaris(
     bruto_per_maand=input_salaris,
     percentage_vakantiegeld=input_vakantiegeld,
@@ -101,16 +103,73 @@ salaris = Salaris(
 salaris_bruto_jaar = salaris.bereken_bruto_jaarlijks()
 salaris_netto_jaar = salaris.bereken_netto_jaarlijks(belasting=belasting)
 salaris_netto_maand = salaris_netto_jaar / 12
-st.metric(
-    label="Bruto (Jaar)",
-    value=f"€{salaris_bruto_jaar:,.2f}",
-)
-st.metric(
-    label="Netto (Jaar)",
-    value=f"€{salaris_netto_jaar:,.2f}",
-)
-st.metric(
-    label="Netto (Maand)",
-    value=f"€{salaris_netto_maand:,.2f}",
-    help="Indien *alle* bonussen maandelijks uitbetaald worden.",
-)
+
+
+metric_col1, metric_col2 = st.columns(2)
+
+with metric_col1:
+    st.metric(
+        label="Bruto (Jaar)",
+        value=f"€{salaris_bruto_jaar:,.0f}".replace(",", "."),
+    )
+    st.metric(
+        label="Netto (Jaar)",
+        value=f"€{salaris_netto_jaar:,.0f}".replace(",", "."),
+    )
+    with st.container():
+        st.metric(
+            label="Netto (Maand)",
+            value=f"€{salaris_netto_maand:,.2f}".translate(
+                str.maketrans({",": ".", ".": ","})
+            ),
+            help="Indien *alle* bonussen maandelijks uitbetaald worden.",
+        )
+        with st.expander("Details"):
+            st.write(
+                f"Bruto belastingschijvern: €{belasting.bereken_bruto_belasting(salaris_bruto_jaar):.2f}"
+            )
+            st.write(
+                f"Arbeidskorting = €{belasting.bereken_korting(salaris_bruto_jaar, 'arbeid'):.2f}"
+            )
+            st.write(
+                f"Heffingskorting = €{belasting.bereken_korting(salaris_bruto_jaar, 'heffing'):.2f}"
+            )
+
+
+def bruto_for_netto(netto_target, belasting, bruto_min=1, bruto_max=1_000_000):
+    def func(bruto):
+        return belasting.bereken_netto_salaris(bruto) - netto_target
+
+    return bisect(func, bruto_min, bruto_max)
+
+
+with metric_col2:
+    slider_value = st.slider(
+        label="Hoeveel €100en netto meer per maand is je doel?",
+        min_value=0,
+        max_value=2000,
+        value=0,
+        step=100,
+        help="Afgerond naar boven per €100.",
+        format="€%d",
+    )
+    wens_netto_maand_slider = (
+        math.ceil((salaris_netto_maand + slider_value) / 100) * 100
+    )
+    wens_netto_maand_slider_bruto_jaar = bruto_for_netto(
+        math.ceil((salaris_netto_maand + slider_value) / 100) * 100 * 12,
+        belasting,
+    )
+    st.metric(
+        label="Doel Netto (Maand)",
+        value=f"€{wens_netto_maand_slider:,.0f}".replace(",", "."),
+        help="Je gewenste netto salaris indien *alle* bonussen maandelijks uitbetaald worden.",
+    )
+    st.write(
+        f"Bij salarisonderhandelingen moet je _€{wens_netto_maand_slider_bruto_jaar:,.2f}_ bruto per jaar vragen,".translate(
+            str.maketrans({",": ".", ".": ","})
+        ),
+        f"Dat is _€{wens_netto_maand_slider_bruto_jaar - salaris_bruto_jaar:,.2f}_ meer dan nu,".translate(
+            str.maketrans({",": ".", ".": ","})
+        ),
+    )
