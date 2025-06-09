@@ -152,19 +152,19 @@ def bruto_for_netto(netto_target, belasting, bruto_min=1, bruto_max=1_000_000):
 
 with metric_col2:
     slider_value = st.slider(
-        label="Hoeveel €100en netto meer per maand is je doel?",
+        label="Hoeveel €50en netto meer per maand is je doel?",
         min_value=0,
         max_value=2000,
         value=0,
-        step=100,
-        help="Afgerond naar boven per €100.",
+        step=50,
+        help="Afgerond naar boven per €50.",
         format="€%d",
     )
     wens_netto_maand_slider = (
-        math.ceil((salaris_netto_maand + slider_value) / 100) * 100
+        math.ceil((salaris_netto_maand + slider_value) / 50) * 50
     )
     wens_netto_maand_slider_bruto_jaar = bruto_for_netto(
-        math.ceil((salaris_netto_maand + slider_value) / 100) * 100 * 12,
+        math.ceil((salaris_netto_maand + slider_value) / 50) * 50 * 12,
         belasting,
     )
     st.metric(
