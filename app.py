@@ -1,10 +1,10 @@
 import math
 
 import streamlit as st
-from scipy.optimize import bisect
 
-from utils.Belasting import Belasting
+from utils.Belasting import Belasting, bruto_for_netto
 from utils.belastingstelsel import belastingstelsels
+from utils.helpers import map_formatter
 from utils.Salaris import Salaris
 
 # Global predefined settings
@@ -126,28 +126,54 @@ with metric_col1:
     with st.container():
         st.metric(
             label="Netto (Maand)",
-            value=f"€{salaris_netto_maand:,.2f}".translate(
-                str.maketrans({",": ".", ".": ","})
-            ),
+            value=f"€{salaris_netto_maand:,.2f}".translate(map_formatter),
             help="Indien *alle* bonussen maandelijks uitbetaald worden.",
         )
         with st.expander("Details"):
-            st.write(
-                f"Bruto belastingschijvern: €{belasting.bereken_bruto_belasting(salaris_bruto_jaar):.2f}"
+            st.write("### Belasting")
+            belasting_belastbaar_inkomen = belasting.bereken_bruto_belasting(
+                salaris_bruto_jaar
             )
             st.write(
-                f"Arbeidskorting = €{belasting.bereken_korting(salaris_bruto_jaar, 'arbeid'):.2f}"
+                belasting.bereken_bruto_belasting(salaris_bruto_jaar, output="tekst")
             )
+            st.write("### Kortingen")
+            arbeidskorting = belasting.bereken_korting(salaris_bruto_jaar, "arbeid")
+            heffingskorting = belasting.bereken_korting(salaris_bruto_jaar, "heffing")
+            kortingen = arbeidskorting + heffingskorting
             st.write(
-                f"Heffingskorting = €{belasting.bereken_korting(salaris_bruto_jaar, 'heffing'):.2f}"
+                f"- Arbeidskorting: €{arbeidskorting:,.2f}\n"
+                f"- Heffingskorting: €{heffingskorting:,.2f}\n\n"
+                f"Je hebt in totaal €{kortingen:,.2f} aan kortingen".translate(
+                    map_formatter
+                )
             )
-
-
-def bruto_for_netto(netto_target, belasting, bruto_min=1, bruto_max=1_000_000):
-    def func(bruto):
-        return belasting.bereken_netto_salaris(bruto) - netto_target
-
-    return bisect(func, bruto_min, bruto_max)
+            st.write("## Berekening")
+            st.write(
+                f"- Bruto Salaris: €{salaris_bruto_jaar:,.2f}\n"
+                f"- Belasting: €{belasting_belastbaar_inkomen:,.2f}\n"
+                f"- Kortingen: €{arbeidskorting + heffingskorting:,.2f}\n\n"
+                f"Netto salaris = Bruto Salaris - (Belasting - Kortingen)\n\n"
+                f"Netto salaris = €{salaris_bruto_jaar:,.2f} - (€{belasting_belastbaar_inkomen:,.2f} - €{kortingen:,.2f})\n\n"
+                f"Netto salaris = €{salaris_netto_jaar:,.2f}\n\n"
+                f"Je netto salaris is dus €{salaris_netto_jaar:,.2f} per jaar ofwel €{salaris_netto_maand:,.2f} per maand".translate(
+                    map_formatter
+                )
+            )
+            st.write("### Uitleg")
+            st.write(
+                """
+                Om je netto salaris te berekenen, moet eerst het belastbaar inkomen 
+                worden berekend. Dit is inclusief vakantiegeld, eindejaarsuitkering, en 
+                eventuele bonussen. Gezamenlijk vormt dit het belastbaar inkomen.
+                
+                Het belastbaar inkomen wordt gebruikt om te bepalen hoeveel belasting je
+                moet betalen per schijf. Ook wordt het belastbaar inkomen gebruikt om
+                de arbeidskorting en heffingskorting te berekenen, die beide van invloed
+                zijn op je uiteindelijke netto salaris. Er geldt: hoe hoger je 
+                belastbaar inkomen, hoe minder korting je krijgt.
+                """
+            )
 
 
 with metric_col2:
@@ -160,9 +186,7 @@ with metric_col2:
         help="Afgerond naar boven per €50.",
         format="€%d",
     )
-    wens_netto_maand_slider = (
-        math.ceil((salaris_netto_maand + slider_value) / 50) * 50
-    )
+    wens_netto_maand_slider = math.ceil((salaris_netto_maand + slider_value) / 50) * 50
     wens_netto_maand_slider_bruto_jaar = bruto_for_netto(
         math.ceil((salaris_netto_maand + slider_value) / 50) * 50 * 12,
         belasting,
@@ -173,10 +197,10 @@ with metric_col2:
         help="Je gewenste netto salaris indien *alle* bonussen maandelijks uitbetaald worden.",
     )
     st.write(
-        f"Bij salarisonderhandelingen moet je _€{wens_netto_maand_slider_bruto_jaar:,.2f}_ bruto per jaar vragen,".translate(
-            str.maketrans({",": ".", ".": ","})
+        f"Om €{wens_netto_maand_slider - salaris_netto_maand:,.2f} meer te verdienen moet je bij salarisonderhandelingen _€{wens_netto_maand_slider_bruto_jaar:,.2f}_ bruto per jaar vragen,".translate(
+            map_formatter
         ),
         f"Dat is _€{wens_netto_maand_slider_bruto_jaar - salaris_bruto_jaar:,.2f}_ meer dan nu,".translate(
-            str.maketrans({",": ".", ".": ","})
+            map_formatter
         ),
     )
