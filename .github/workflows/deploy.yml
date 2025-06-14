@@ -1,6 +1,10 @@
-name: Deploy to Raspberry Pi with Docker
+name: CI & Deploy to Raspberry Pi with Docker
+
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -10,10 +14,32 @@ env:
   DOCKER_IMAGE: salarisonderhandeling
   PORT: 8502
   CONTAINER: salaris
-  
+
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.7.12"
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run pytest
+        run: python -m pytest
+
   build:
     runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name != 'pull_request'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,7 +53,6 @@ jobs:
           username: panliyong
           password: "${{ secrets.DOCKER_PASSWORD }}"
 
-    
       - name: Build and Push Docker Image
         run: |
           docker buildx create --use
@@ -40,6 +65,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    if: github.event_name != 'pull_request'
     steps:
       - name: SSH in Pi and Pull & Deploy
         uses: appleboy/ssh-action@master
