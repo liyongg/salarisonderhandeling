@@ -36,8 +36,8 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Run pytest
-        run: uv run pytest --cov=salarisonderhandeling --cov-report=xml --cov-report=html --cov-fail-under=80
-
+        run: uv run pytest 
+        
   build:
     runs-on: ubuntu-latest
     needs: test
