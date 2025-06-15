@@ -1,6 +1,7 @@
 import math
 
 import streamlit as st
+from scipy.optimize import bisect
 
 from utils.Belasting import Belasting, bruto_for_netto
 from utils.belastingstelsel import belastingstelsels
@@ -176,6 +177,29 @@ with metric_col1:
             )
 
 
+def bruto_for_netto_maandelijks(
+    netto_target,
+    bruto_min=1,
+    bruto_max=1_000_000_000,
+):
+    def func(bruto):
+        salaris_instance = Salaris(
+            bruto_per_maand=bruto,
+            percentage_vakantiegeld=input_vakantiegeld,
+            percentage_eindejaars=input_eindejaars,
+            percentage_bonus=input_bonus_perc,
+            percentage_pensioen=input_pensioen_perc,
+            bonus=input_bonus_abs,
+            bruto_netto_ruil=input_bruto_netto_ruil,
+            vergoeding=input_vergoeding,
+        )
+        return (
+            salaris_instance.bereken_netto_jaarlijks(belasting=belasting) - netto_target
+        )
+
+    return bisect(func, bruto_min, bruto_max)
+
+
 with metric_col2:
     slider_value = st.slider(
         label="Hoeveel €50en netto meer per maand is je doel?",
@@ -188,7 +212,7 @@ with metric_col2:
     )
     wens_netto_maand_slider = math.ceil((salaris_netto_maand + slider_value) / 50) * 50
     wens_netto_maand_slider_bruto_jaar = bruto_for_netto(
-        math.ceil((salaris_netto_maand + slider_value) / 50) * 50 * 12,
+        wens_netto_maand_slider * 12,
         belasting,
     )
     st.metric(
@@ -197,10 +221,22 @@ with metric_col2:
         help="Je gewenste netto salaris indien *alle* bonussen maandelijks uitbetaald worden.",
     )
     st.write(
-        f"Om €{wens_netto_maand_slider - salaris_netto_maand:,.2f} meer te verdienen moet je bij salarisonderhandelingen _€{wens_netto_maand_slider_bruto_jaar:,.2f}_ bruto per jaar vragen,".translate(
+        f"Om _€{wens_netto_maand_slider - salaris_netto_maand:,.2f}_ meer te verdienen moet je bij salarisonderhandelingen _€{wens_netto_maand_slider_bruto_jaar:,.2f}_ bruto per jaar vragen,".translate(
             map_formatter
         ),
         f"Dat is _€{wens_netto_maand_slider_bruto_jaar - salaris_bruto_jaar:,.2f}_ meer dan nu,".translate(
             map_formatter
         ),
     )
+    if input_maand_of_jaar == "Maandelijks":
+        wens_netto_maand_bruto_maand = bruto_for_netto_maandelijks(
+            wens_netto_maand_slider * 12
+        )
+        st.write(
+            f"Met dezelfde percentages en bonussen is dat _€{wens_netto_maand_bruto_maand:,.2f}_ bruto per maand dat je moet vragen,".translate(
+                map_formatter
+            ),
+            f"Dat is _€{wens_netto_maand_bruto_maand - input_salaris:,.2f}_ meer dan nu,".translate(
+                map_formatter
+            ),
+        )
