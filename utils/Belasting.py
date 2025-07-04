@@ -108,7 +108,7 @@ class Belasting:
         tarieven = kortingen[type]
 
         for (lower, upper), formule in tarieven.items():
-            if lower <= bruto_jaarlijks < upper:
+            if lower <= max(0, bruto_jaarlijks) < upper:
                 return formule(bruto_jaarlijks)
         raise ValueError("Salaris is niet gedefinieerd in de tarieven.")
 

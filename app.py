@@ -81,7 +81,7 @@ with st.sidebar:
             label="Bruto-Netto Ruil (€/Maand)",
             value=0.00,
             min_value=0.00,
-            max_value=1_000_000.0,
+            max_value=input_salaris,
             help="Zoals een vitaliteitsverlof",
         )
     elif input_maand_of_jaar == "Jaarlijks":
