@@ -40,4 +40,23 @@ belastingstelsels: dict[int, dict[str, Tarieven]] = {
             (76817, float("inf")): lambda x: 0.4950 * x,
         },
     },
+    2026: {
+        "arbeidskorting": {
+            (0, 11965): lambda x: 0.08324 * x,
+            (11965, 25845): lambda x: 996 + 0.31009 * (x - 11965),
+            (25845, 45592): lambda x: 5300 + 0.01950 * (x - 25845),
+            (45592, 132920): lambda x: 5685 - 0.06510 * (x - 45592),
+            (132920, float("inf")): lambda x: 0.0,
+        },
+        "heffingskorting": {
+            (0, 29736): lambda x: 3115,
+            (29736, 78426): lambda x: 3115 - 0.06398 * (x - 29736),
+            (78426, float("inf")): lambda x: 0.0,
+        },
+        "schijven": {
+            (0, 38883): lambda x: 0.3575 * x,
+            (38883, 78426): lambda x: 0.3756 * x,
+            (78426, float("inf")): lambda x: 0.4950 * x,
+        },
+    },
 }
